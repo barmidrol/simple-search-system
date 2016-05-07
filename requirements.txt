@@ -1,0 +1,4 @@
+Django==1.9.6
+dj-database-url==0.4.1
+gunicorn==19.4.5
+whitenoise==3.0
