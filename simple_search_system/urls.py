@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$','search_system.views.home',name="home"),
+    url(r'^search/$', 'search_system.views.search', name="search"),
 ]
