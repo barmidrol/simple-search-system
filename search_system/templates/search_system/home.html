@@ -6,19 +6,23 @@
 
 {% bootstrap_messages %}
 
+
 <link rel="stylesheet" type="text/css" href="{% static 'search_system/home.css' %}" />
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
-  <!-- Angular Material requires Angular.js Libraries -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
-
-  <!-- Angular Material Library -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+<!-- Angular Material requires Angular.js Libraries -->
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+<script type="text/javascript" src="{% static 'search_system/ng-infinite-scroll.min.js' %}"></script>
+
+
+<!-- Angular Material Library -->
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-cookies.js"></script>
 <script src="/angular-ui-router.min.js"></script>
@@ -49,8 +53,7 @@
 {% verbatim %}
 <div ng-app="searchApp" ng-controller="searchController" class="container">
   <div class="starter-template">
-    <h1>Simple search system</h1>
-    <h1>{{status}}</h1>
+    <h1 class="md-display-3">Simple search system</h1>
   </div>
   <md-content class="md-padding">
       <md-autocomplete
@@ -68,11 +71,26 @@
       <md-checkbox >Index?</md-checkbox>
       <md-button ng-click="search()" class="md-raised">Search</md-button>
     </md-content>
-    <div>
-      <div ng-repeat="result in searchResults">
-        <a href="{{result}}">{{result}}</a>
-      </div>
-    </div>
+  <div ng-show="isLoading" layout="row" layout-sm="column" layout-align="space-around">
+    <md-progress-linear md-mode="query"></md-progress-linear>
+  </div>
+  <div infinite-scroll='loadResults()' infinite-scroll-disabled='isBusy' infinite-scroll-distance='1' ng-show="anyResults()">
+    <h4>{{resultAmount}} results found</h4>
+    <md-list>
+      <md-list-item style="height: 100px; width: 65%;" class="md-3-line"  ng-repeat="item in searchResults">
+        <div class="md-list-item-text">
+          <h3>{{item.Title}}</h3>
+          <p class="snippet">{{item.Snippet}}</p>
+        </div>
+        <md-button class="md-secondary" ng-href="{{item.Link}}" ng-attr-target="_blank">Go</md-button>
+        <md-divider></md-divider>
+      </md-list-item>
+    </md-list>
+    <div ng-show="isBusy" layout="row" layout-sm="column" layout-align="space-around">
+      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+  </div>
+  </div>
+
   {% endverbatim %}
 
 

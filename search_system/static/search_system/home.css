@@ -5,3 +5,9 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+
+.snippet {
+  text-overflow: ellipsis;
+  width: inherit;
+  height: 50px;
+}

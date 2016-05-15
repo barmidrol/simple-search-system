@@ -2,8 +2,8 @@
  * Created by velior on 11.05.16.
  */
 
-var app = angular.module('searchApp', ['ngCookies', 'ngMaterial']).
-    config([
+var app = angular.module('searchApp', ['ngCookies', 'ngMaterial', 'infinite-scroll'])
+    .config([
     '$httpProvider',
     function($httpProvider) {
         // Change content type for POST so Django gets correct request object
@@ -22,18 +22,43 @@ var app = angular.module('searchApp', ['ngCookies', 'ngMaterial']).
 
 app.controller('searchController', ['$scope','$http', '$cookies',function($scope, $http) {
     $scope.searchResults = [];
-    $scope.searchRequest = "";
-    $scope.status = "idle";
+    $scope.searchResultsId = -1;
+    $scope.isBusy = false;
+    $scope.searchRequest = "Cats";
+    $scope.isLoading = false;
     $scope.search = function() {
-        $scope.status = "searching...";
+        $scope.isLoading = true;
+        $scope.searchResults = [];
+        $scope.searchResultsId = -1;
         $http({
             url: '/search/',
             method: 'POST',
-            data: $.param({text: $scope.searchRequest, requestType: "ADD"})
+            data: $.param({text: $scope.searchText, requestType: "ADD"})
         }).success(function (out_data) {
-            $scope.searchResults = out_data;
-            $scope.status = "idle";
+            $scope.searchResultsId = out_data.result_id;
+            $scope.resultAmount = out_data.result_amount;
+            $scope.isLoading = false;
+            $scope.loadResults();
         });
+    };
+    $scope.anyResults = function () {
+        return $scope.searchResultsId >= 0;
+    };
+
+    $scope.loadResults = function() {
+        if ($scope.searchResultsId == -1)
+            return;
+        $scope.isBusy = true;
+        $http({
+            url: '/load_results/',
+            method: 'POST',
+            data: $.param({resultsId: $scope.searchResultsId, requestType: "ADD"})
+        }).success(function (out_data) {
+            for (var i = 0; i < out_data.length; i++)
+                $scope.searchResults.push(out_data[i]);
+            $scope.isBusy = false;
+        });
+
     };
     $scope.searchText = "";
     $scope.searchHistory = ['cats', 'django', 'treap implementaion c++'];
