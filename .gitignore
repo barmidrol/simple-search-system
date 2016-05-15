@@ -23,6 +23,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+staticfiles/*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -63,3 +64,4 @@ target/
 
 # OSX stuff
 *.DS_Store
+.idea

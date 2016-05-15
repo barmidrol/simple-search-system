@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from search_system.engine.EngineMock import SearchEngine
-from search_system.engine.EngineMock import SearchResultsManager
+from search_system.engine.engine_mock import SearchEngine
+from search_system.engine.engine_mock import SearchResultsManager
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.http import JsonResponse
