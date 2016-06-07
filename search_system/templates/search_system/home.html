@@ -1,56 +1,6 @@
-{% load bootstrap3 %}
-{% load staticfiles %}
+{% extends 'search_system/base.html' %}
 
-{% bootstrap_css %}
-{% bootstrap_javascript %}
-
-{% bootstrap_messages %}
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-<link rel="stylesheet" type="text/css" href="{% static 'search_system/home.css' %}" />
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-
-<!-- Angular Material requires Angular.js Libraries -->
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
-<script type="text/javascript" src="{% static 'search_system/ng-infinite-scroll.min.js' %}"></script>
-
-
-<!-- Angular Material Library -->
-<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
-
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-cookies.js"></script>
-<script src="/angular-ui-router.min.js"></script>
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/restangular/latest/restangular.js"></script>
-<script type="text/javascript" src="{% static 'search_system/scripts.js' %}"></script>
-
-<nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">SEARCH SYSTEM</a>
-    </div>
-    <div id="navbar" class="collapse navbar-collapse">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div>
-</nav>
+{% block content %}
 {% verbatim %}
 <div ng-app="searchApp" ng-controller="searchController" class="container">
   <div class="starter-template">
@@ -93,6 +43,4 @@
   </div>
 
   {% endverbatim %}
-
-
-</div><!-- /.container -->
+{% endblock %}

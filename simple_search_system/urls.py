@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^$','search_system.views.home',name="home"),
     url(r'^search/$', 'search_system.views.search', name="search"),
     url(r'^load_results/$', 'search_system.views.load_results', name="load_results"),
+    url(r'^index/$', 'search_system.views.index_page', name='index_page')
 ]

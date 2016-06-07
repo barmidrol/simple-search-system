@@ -1,0 +1,12 @@
+{% extends 'search_system/base.html' %}
+
+{% block content %}
+<div class="col-lg-6 index_input">
+  <form action="{% url 'index_page' %}" method="post">
+    {% csrf_token %}
+      <label for="url">Url to fetch: </label>
+      <input id="url" type="text" name="url" value="http://bash.org.ru/">
+      <input type="submit" value="OK">
+  </form>
+</div><!-- /.col-lg-6 -->
+{% endblock %}

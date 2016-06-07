@@ -7,9 +7,18 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
 
+from search_engine.db.redis_manager import RedisManager
+
 
 def home(request):
     return render(request, 'search_system/home.html', {})
+
+def index_page(request):
+    if request.method == 'POST':
+        redis_conn = RedisManager()
+        redis_conn.put_url_to_local_queue(request.POST['url'])
+        
+    return render(request, 'search_system/index_page.html', {})
 
 @csrf_protect
 @csrf_exempt

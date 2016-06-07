@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'search_system',
     'bootstrap3',
+    'search_engine',
 ]
 
 MIDDLEWARE_CLASSES = [

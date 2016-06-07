@@ -3,61 +3,57 @@ import re
 import time
 from threading import Thread
 import mechanize
-import readability
-from bs4 import BeautifulSoup
-from readability.readability import Document
 import urlparse
+from utils import compress_data
+from db.redis_manager import RedisManager
+from db.mongo_manager import MongoManager
 
 
 class Crawler:
     visited = []
     thread_list = []
-    urls = []
-    glob_visited = []
-
-    depth = 0
     counter = 0
-    root = ""
+    sleep_time = 0
 
-    def __init__(self, url, depth):
-        self.glob_visited.append(url)
-        self.depth = depth
-        self.root = url
+    def __init__(self, sleep_time=1):
+        self.redis_conn = RedisManager()
+        self.mongo_conn = MongoManager()
+        self.browser = mechanize.Browser()
+        self.sleep_time = sleep_time
 
     def run(self):
-        while self.counter < self.depth:
-            for w in self.glob_visited:
-                self.visited.append(w)
-                self.urls.append(w)
+        while True:
+            if self.redis_conn.len_local_queue() == 0:
+                print "No urls in local queue"
+                time.sleep(self.sleep_time)
 
-            self.glob_visited = []
-            for r in self.urls:
+            while self.redis_conn.len_local_queue() > 0:
+                data = {}
+                url = self.redis_conn.get_url_from_local()
                 try:
-                    t = Thread(target=self.scrape, args=(r,))
+                    t = Thread(target=self.crawl_site, args=(url,))
                     self.thread_list.append(t)
-                    t.start()
                 except:
                     pass
-            for g in self.thread_list:
-                g.join()
-            self.counter += 1
 
-        return self.visited
+        [thread.start() for thread in self.thread_list]
+        [thread.join() for thread in self.thread_list]
 
-    def scrape(self, root):
+    def crawl_site(self, url):
+        data = {}
+        page = self.fetch(url)
+        data['url'] = url
+        data['body'] = compress_data(page)
+        self.mongo_conn.html_to_process(data)
+
+    def fetch(self, url):
         result_urls = []
-        br = mechanize.Browser()
-        br.set_handle_robots(False)
-        br.addheaders = [('User-Agent', 'Firefox')]
+        self.browser.set_handle_robots(False)
+        self.browser.addheaders = [('User-Agent', 'Firefox')]
+        return self.browser.open(url).read()
 
-        try:
-            br.open(root)
-            for link in br.links():
-                new_url = urlparse.urljoin(link.base_url, link.url)
-                if urlparse.urlparse(root).netloc in urlparse.urlparse(link.base_url).netloc and new_url not in self.glob_visited:
-                    result_urls.append(new_url)
-        except:
-            pass
+test = Crawler()
+test.redis_conn.put_url_to_local_queue('http://onliner.by')
+test.redis_conn.put_url_to_local_queue('http://tut.by')
 
-        for res in result_urls:
-            self.glob_visited.append(res)
+test.run()
