@@ -44,16 +44,11 @@ class Crawler:
         page = self.fetch(url)
         data['url'] = url
         data['body'] = compress_data(page)
-        self.mongo_conn.html_to_process(data)
+        print(data['body'])
+        #self.mongo_conn.html_to_process(data)
 
     def fetch(self, url):
         result_urls = []
         self.browser.set_handle_robots(False)
         self.browser.addheaders = [('User-Agent', 'Firefox')]
         return self.browser.open(url).read()
-
-test = Crawler()
-test.redis_conn.put_url_to_local_queue('http://onliner.by')
-test.redis_conn.put_url_to_local_queue('http://tut.by')
-
-test.run()
