@@ -25,6 +25,7 @@ def search(request):
     if request.method == 'POST':
         searchEngine = SearchEngine()
         result = searchEngine.search(request.POST["text"])
+        print(result)
         return JsonResponse(result, safe=False)
 
 

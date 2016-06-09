@@ -180,31 +180,3 @@ class TextHandler:
     @property
     def frequencies(self):
         return self.frequencies
-
-
-if __name__ == '__main__':
-    import requests
-    from htmlparser import Parser
-    import time
-    response = requests.get('http://devacademy.ru/posts/chego-ozhidat-ot-php7-chast-1/')
-    content = response.content.decode('UTF-8')
-    parser = Parser()
-    parser.feed(content, response.url)
-
-    start = time.time()
-
-    txthandler = TextHandler()
-    txthandler.feed(
-        parser.text,
-        title=parser.title,
-        h1=parser.h1[0],
-        h2=parser.h2,
-        h3=parser.h3,
-        h4=parser.h4,
-        h5=parser.h5,
-        h6=parser.h6)
-
-    for x in txthandler.frequencies:
-        print(x)
-    print(txthandler.sentences)
-    print("Time ", time.time() - start)

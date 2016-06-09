@@ -51,7 +51,7 @@ class CassandraManager:
     def get_document(self, url):
         result = self.__session.execute(
             '''
-            SELECT sentences, title, h1, time FROM documents
+            SELECT sentences, title, h1 FROM documents
             WHERE url=%s
             ''',
             (url,)
@@ -79,13 +79,13 @@ class CassandraManager:
             (term,)
         )
 
-        return result
+        return list(result)
 
     def get_positions_of_term_in_doc(self, term, url):
         result = self.__session.execute(
             '''
             SELECT positions FROM main_index
-            WHERE term=%s AND url=%s
+            WHERE term=%s AND url=%s ALLOW FILTERING
             ''',
             (term, url)
         )
@@ -95,20 +95,11 @@ class CassandraManager:
     def get_count_of_documents(self):
         result = self.__session.execute(
             '''
-            SELECT count FROM counters_of_documents
-            WHERE key='count_of_documents'
+            SELECT count(*) FROM documents
             '''
         )[0]
 
         return result.count
-
-    def __increment_count_of_documents(self):
-        self.__session.execute(
-            '''
-            UPDATE counters_of_documents SET count = count + 1
-            WHERE key='count_of_documents'
-            '''
-        )
 
     def __del__(self):
         self.__cluster.shutdown()

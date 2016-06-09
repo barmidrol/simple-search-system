@@ -1,24 +1,32 @@
 import threading
 import json
+import pymorphy2
+
+from search_system.query_handler import QueryHandler
+from search_system.snippet_generator import SnippentsGenerator
+from search_engine.utils import word_tokenize
 
 class SearchEngine(object):
-    def search(self, request):
-        threading._sleep(1)
-        result = [
-            {
-                "Title" : "{0}#{1}".format(request, i),
-                "Snippet" : request * 200,
-                "Link" : "http://lmgtfy.com/?q={0}".format(request)
-            }
-            for i in range(50)
-        ]
-        result_info = {"resume_point" : 0, "result" : result}
-        result_id = 0
-        with open("search_results{0}".format(result_id), 'w') as f:
-            encoder = json.JSONEncoder()
-            f.write(encoder.encode(result_info))
+    analyzer = pymorphy2.MorphAnalyzer()
+    handler = QueryHandler()
+    snippet_generator = SnippentsGenerator(200)
 
-        return {"result_id" : result_id, "result_amount" : len(result)}
+    def process_query(self, query):
+        return [self.analyzer.parse(word)[0].normal_form for word in word_tokenize(query)]
+
+    def search(self, query):
+        if query is not None and query.strip():
+            processed_query = self.process_query(query)
+            self.handler.feed(processed_query)
+            result = self.handler.get_documents_list()
+            print(result)
+            for document in result:
+                self.snippet_generator.feed(document['url'], processed_query)
+                document['Title'] = self.snippet_generator.get_title()
+                document['Snippet'] = self.snippet_generator.get_snippet()
+
+        return result
+
 
 
 class SearchResultsManager(object):
