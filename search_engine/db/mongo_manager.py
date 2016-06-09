@@ -24,14 +24,18 @@ class MongoManager:
             if page:
                 break
             else:
-                print('No documents to process. Waiting {0} seconds...'.format(self.__sleep_time))
-                time.sleep(self.__sleep_time)
+                print('No documents to process. Waiting {0} seconds...'.format(self.sleep_time))
+                time.sleep(self.sleep_time)
 
         return page
 
     def write_processed_document(self, url):
         indexed_docs = self.db.indexed_documents
         indexed_docs.insert_one({'url': url, 'time': time.time()})
+
+    def write_to_index(self, url, freq):
+        index = self.db.index
+        index.insert_one({'url': url, 'freq': freq})
 
     def update_processed_document(self, url):
         indexed_docs = self.db.indexed_documents

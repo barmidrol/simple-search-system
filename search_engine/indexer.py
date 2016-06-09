@@ -1,6 +1,6 @@
 from multiprocessing import Process
 
-from texthandler import TextHandler
+from text_handler import TextHandler
 from db.mongo_manager import MongoManager
 #from db.cassandra_manager import CassandraManager
 #from utils import compress_data, decompress_data
@@ -8,15 +8,15 @@ from db.mongo_manager import MongoManager
 
 class Indexer:
     def __init__(self):
-        self.__mongo_conn = MongoManager()
+        self.mongo_conn = MongoManager()
         #self.__cassandra_conn = CassandraManager()
-        #self.__text_handler = TextHandler()
+        self.text_handler = TextHandler()
 
     def start(self):
         while True:
             document = self.mongo_conn.get_document_to_indexing()
 
-            h1_length = len(document['h1'])
+            h1_length = len(document['h1'] or '')
             if h1_length == 1:
                 h1 = document['h1'][0]
             elif h1_length == 0:
@@ -25,10 +25,11 @@ class Indexer:
             if h1_length > 1 or not document['title'] and not h1:
                 continue
 
+            print('text = {0}'.format(document['text'].encode('utf-8')))
             try:
-                self.__text_handler.feed(
-                    text=decompress_data(document['text']).decode('utf-8'),
-                    title=document['title'],
+                self.text_handler.feed(
+                    text=document['text'].encode('utf-8'),
+                    title=document['title'].encode('utf-8'),
                     h1=h1,
                     h2=document['h2'],
                     h3=document['h3'],
@@ -39,30 +40,21 @@ class Indexer:
             except IndexError as err:
                 print(
                     'Index error for {0}: '.format(document['url']),
-                    decompress_data(document['text']).decode('utf-8'),
+                    document['text'],
                     err
                 )
 
                 break
 
-            self.__write_data_to_cassandra(
+            self.write_data_to_cassandra(
                 document['url'],
                 document['title'],
-                h1,
-                document['time']
+                h1
             )
 
-    def __write_data_to_cassandra(self, url, title, h1, time):
-        print('Indexing {0}'.format(url))
-        self.__cassandra_conn.write_data_to_index(url, self.__text_handler.frequencies)
-        self.__cassandra_conn.write_document(
-            url,
-            compress_data(self.__text_handler.sentences),
-            title,
-            h1,
-            time
-        )
-
+    def write_data_to_cassandra(self, url, title, h1):
+        self.mongo_conn.write_to_index(url, self.text_handler.frequencies)
+        print(self.text_handler.frequencies)
 
 def main(process_count):
     def indexing():

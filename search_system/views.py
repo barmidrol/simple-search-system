@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
 
-from .tasks import hello_world, crawl
+from .tasks import crawl
 
 
 def home(request):
@@ -15,7 +15,6 @@ def home(request):
 
 def index_page(request):
     if request.method == 'POST':
-        redis_conn = RedisManager()
         crawl(request.POST['url'])
 
     return render(request, 'search_system/index_page.html', {})

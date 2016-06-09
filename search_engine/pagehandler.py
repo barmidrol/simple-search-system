@@ -5,10 +5,12 @@ from urlparse import urlparse
 
 from db.mongo_manager import MongoManager
 from bs4 import BeautifulSoup
+from search_engine.html_parser import Parser
 
 class PageHandler:
     def __init__(self):
         self.mongo_conn = MongoManager()
+        self.parser = Parser()
 
     def start(self):
         while True:
@@ -26,18 +28,18 @@ class PageHandler:
                 print('Decode error on {0}: '.format(page['url'], err))
                 return
 
-            soup = BeautifulSoup(html, "html.parser")
+            self.parser.feed(html, page['url'])
 
             data = {
                 'url': page['url'],
-                'text': soup.text if soup else "",
-                'title': soup.title.text if soup.title else "",
-                'h1': soup.h1.text if soup.h1 else "",
-                'h2': soup.h2.text if soup.h2 else "",
-                'h3': soup.h3.text if soup.h3 else "",
-                'h4': soup.h4.text if soup.h4 else "",
-                'h5': soup.h5.text if soup.h5 else "",
-                'h6': soup.h6.text if soup.h6 else "",
+                'text': self.parser.text,
+                'title': self.parser.title,
+                'h1': self.parser.h1,
+                'h2': self.parser.h2,
+                'h3': self.parser.h3,
+                'h4': self.parser.h4,
+                'h5': self.parser.h5,
+                'h6': self.parser.h6,
             }
 
             if indexed_page is None:
