@@ -7,9 +7,17 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
 
+from .tasks import crawl
+
 
 def home(request):
     return render(request, 'search_system/home.html', {})
+
+def index_page(request):
+    if request.method == 'POST':
+        crawl(request.POST['url'])
+
+    return render(request, 'search_system/index_page.html', {})
 
 @csrf_protect
 @csrf_exempt
@@ -17,6 +25,7 @@ def search(request):
     if request.method == 'POST':
         searchEngine = SearchEngine()
         result = searchEngine.search(request.POST["text"])
+        print(result)
         return JsonResponse(result, safe=False)
 
 

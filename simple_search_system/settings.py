@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'search_system',
     'bootstrap3',
+    'search_engine',
+    'djcelery',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -138,3 +140,5 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 import dj_database_url
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
+
+CELERY_IMPORTS = ('search_system.tasks',)
