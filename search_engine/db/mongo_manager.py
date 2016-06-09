@@ -66,6 +66,5 @@ class MongoManager:
     def __del__(self):
         self.client.close()
 
-
 if __name__ == '__main__':
     m = MongoManager()

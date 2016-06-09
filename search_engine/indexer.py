@@ -2,14 +2,12 @@ from multiprocessing import Process
 
 from text_handler import TextHandler
 from db.mongo_manager import MongoManager
-#from db.cassandra_manager import CassandraManager
-#from utils import compress_data, decompress_data
-
+from db.cassandra_manager import CassandraManager
 
 class Indexer:
     def __init__(self):
         self.mongo_conn = MongoManager()
-        #self.__cassandra_conn = CassandraManager()
+        self.cassandra_conn = CassandraManager()
         self.text_handler = TextHandler()
 
     def start(self):
@@ -28,8 +26,8 @@ class Indexer:
             print('text = {0}'.format(document['text'].encode('utf-8')))
             try:
                 self.text_handler.feed(
-                    text=document['text'].encode('utf-8'),
-                    title=document['title'].encode('utf-8'),
+                    text=document['text'],
+                    title=document['title'],
                     h1=h1,
                     h2=document['h2'],
                     h3=document['h3'],
@@ -53,8 +51,13 @@ class Indexer:
             )
 
     def write_data_to_cassandra(self, url, title, h1):
-        self.mongo_conn.write_to_index(url, self.text_handler.frequencies)
-        print(self.text_handler.frequencies)
+        self.cassandra_conn.write_data_to_index(url, self.text_handler.frequencies)
+        self.cassandra_conn.write_document(
+            url,
+            self.text_handler.sentences,
+            title,
+            h1
+        )
 
 def main(process_count):
     def indexing():
