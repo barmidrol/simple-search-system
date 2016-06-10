@@ -2,7 +2,7 @@
  * Created by velior on 11.05.16.
  */
 
-var app = angular.module('searchApp', ['ngCookies', 'ngMaterial', 'infinite-scroll'])
+var app = angular.module('searchApp', ['ngCookies', 'ngMaterial', 'infinite-scroll', 'ngSanitize'])
     .config([
     '$httpProvider',
     function($httpProvider) {
@@ -22,6 +22,7 @@ var app = angular.module('searchApp', ['ngCookies', 'ngMaterial', 'infinite-scro
 
 app.controller('searchController', ['$scope','$http', '$cookies',function($scope, $http) {
     $scope.searchResults = [];
+    $scope.snip = "Lorem ipsum sit dolor asdwq eqwe qwsad dfs frerw ew rew";
     $scope.searchResultsId = -1;
     $scope.isBusy = false;
     $scope.searchRequest = "Cats";

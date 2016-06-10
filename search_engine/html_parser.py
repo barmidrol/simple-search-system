@@ -152,10 +152,6 @@ class Parser:
         self.__h5 = [h5.text_content().strip() for h5 in html_tree.xpath('//h5')]
         self.__h6 = [h6.text_content().strip() for h6 in html_tree.xpath('//h6')]
 
-        #for el, attr, link, pos in html_tree.iterlinks():
-        #    link = urlparse.urldefrag(urlparse.unquote_plus(urlparse.urljoin(self.__response_url, link)))
-        #    self.__links.append((el.text_content(), attr, link[0], pos))
-
     def __remove_bad_tagtrees(self, html_tree):
         remove_tagtree = [
             './/code', './/head', './/header', './/aside', './/footer', './/nav',

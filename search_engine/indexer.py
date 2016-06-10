@@ -51,6 +51,7 @@ class Indexer:
             )
 
     def write_data_to_cassandra(self, url, title, h1):
+        print(self.text_handler.frequencies)
         self.cassandra_conn.write_data_to_index(url, self.text_handler.frequencies)
         self.cassandra_conn.write_document(
             url,
@@ -58,16 +59,3 @@ class Indexer:
             title,
             h1
         )
-
-def main(process_count):
-    def indexing():
-        indexer = Indexer()
-        indexer.start()
-
-    workers = [Process(target=indexing) for _ in range(process_count)]
-    [worker.start() for worker in workers]
-    [worker.join() for worker in workers]
-
-
-if __name__ == '__main__':
-    main(3)

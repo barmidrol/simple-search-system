@@ -1,9 +1,6 @@
 from copy import copy
-
 from blist import sortedlist
-
 from search_engine.db.cassandra_manager import CassandraManager
-
 
 class QueryHandler:
     def __init__(self):
@@ -24,6 +21,9 @@ class QueryHandler:
         self.__ranking()
         self.__sort_result()
 
+    def get_doc(self):
+        self.__get_documents_contain_term()
+
     def __get_documents_contain_term(self):
         for term in self.__query:
             result = self.__cassandra_conn.get_documents_contain_term(term)
@@ -38,6 +38,7 @@ class QueryHandler:
                     documents.add([item.url, item.frequence * idf])
 
                 self.__data[term] = documents
+                return documents
 
     def __documents_lists_intersection(self):
         temp = sortedlist([])

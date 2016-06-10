@@ -9,6 +9,8 @@ from eventlet import Timeout
 from pybloom import BloomFilter
 from search_engine.db.mongo_manager import MongoManager
 from search_engine.pagehandler import PageHandler
+from search_engine.indexer import Indexer
+from celery.signals import celeryd_init
 
 url_regex = re.compile(
     r'\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))')
@@ -27,6 +29,7 @@ def crawl(url, seen=None):
         response = requests.get(url)
         conn = MongoManager()
         data = {'url': url, 'body': response.content}
+        #if response.status_code == 200:
         conn.html_to_process(data)
 
     location = domain(url)
@@ -40,8 +43,3 @@ def crawl(url, seen=None):
 
     subtasks = group(crawl.s(url, seen) for url in wanted_urls)
     subtasks()
-
-@app.task
-def handle_pages():
-    handler = PageHandler()
-    handler.start()

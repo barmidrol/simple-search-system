@@ -11,7 +11,7 @@ class CassandraManager:
         self.__session.execute(
             '''
             CREATE TABLE main_index(
-                   term text PRIMARY KEY,
+                   term text,
                    url text,
                    frequence float,
                    positions list<int>
@@ -31,10 +31,11 @@ class CassandraManager:
 
     def write_data_to_index(self, url, frequencies):
         for item in frequencies:
+            print('WRITING TO CASSANDRA -> {0}'.format(item[0]))
             self.__session.execute(
                 '''
-                INSERT INTO main_index (term, url, frequence, positions)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO main_index (term, url, frequence, positions, uid)
+                VALUES (%s, %s, %s, %s, now())
                 ''',
                 (item[0], url, item[1], item[2])
             )
@@ -74,7 +75,7 @@ class CassandraManager:
         result = self.__session.execute(
             '''
             SELECT url, frequence FROM main_index
-            WHERE term=%s
+            WHERE term=%s ALLOW FILTERING
             ''',
             (term,)
         )

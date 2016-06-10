@@ -113,18 +113,16 @@ class SnippentsGenerator:
             except IndexError:
                 break
 
-            print(candidate)
             snippet_length += candidate[1]
             candidates.append([candidate[2], candidate[3]])
 
         candidates.sort()
-        for candidate in candidates:
-            print(self.__sentences)
-            sentence = word_tokenize_save_separators(self.__sentences[candidate[0]])
+        for sentence in self.__sentences:
+            sentence = word_tokenize_save_separators(sentence)
 
-            for index, item in enumerate(candidate[1]):
-                if item in self.__query:
-                    sentence[index] = ''.join(['<b>', sentence[index], '</b>'])
+            for index, item in enumerate(sentence):
+                if item.lower() in self.__query:
+                    sentence[index] = ''.join(['<mark>', sentence[index], '</mark>'])
 
             sentence = ''.join(sentence)
             snippet.append(sentence)

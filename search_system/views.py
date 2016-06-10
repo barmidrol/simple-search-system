@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from search_system.engine.engine_mock import SearchEngine
-from search_system.engine.engine_mock import SearchResultsManager
+from search_system.handler import SearchEngine
+from search_system.handler import SearchResultsManager
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.http import JsonResponse
@@ -8,7 +8,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
 
 from .tasks import crawl
-
 
 def home(request):
     return render(request, 'search_system/home.html', {})
@@ -25,9 +24,7 @@ def search(request):
     if request.method == 'POST':
         searchEngine = SearchEngine()
         result = searchEngine.search(request.POST["text"])
-        print(result)
         return JsonResponse(result, safe=False)
-
 
 @csrf_protect
 @csrf_exempt

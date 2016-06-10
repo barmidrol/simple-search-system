@@ -65,10 +65,6 @@ class TextHandler:
             if word not in stop_words]
 
         terms = set(words)
-        print('-----------------------')
-        print(terms)
-        print(words)
-        print('-----------------------')
         return terms, words
 
     def tfc(self, field, boost, save_words=False):
