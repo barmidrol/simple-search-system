@@ -1,6 +1,5 @@
-# coding=utf-8
-import bz2
 import re
+from search_engine.stop_words import stop_words
 
 def normalize_spaces(s):
     if not s:
@@ -9,8 +8,8 @@ def normalize_spaces(s):
 
 def word_tokenize(field):
     splitter = re.compile(ur'[^\w\+-]')
-    return [word.lower() for word in splitter.split(field) if word and word != '-' and not word.isspace()]
+    return [word.lower() for word in splitter.split(field) if word and word != '-' and not word.isspace() ]
 
 def word_tokenize_save_separators(field):
     splitter = re.compile(r'([^\w\+-])')
-    return [word for word in splitter.split(field) if word]
+    return [word for word in splitter.split(field) if word and word not in stop_words]

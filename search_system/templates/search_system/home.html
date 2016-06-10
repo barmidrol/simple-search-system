@@ -4,7 +4,6 @@
 {% verbatim %}
 <div ng-app="searchApp" ng-controller="searchController" class="container">
   <div class="starter-template">
-    <h1 class="md-display-3">Simple search system</h1>
   </div>
   <md-content class="md-padding">
       <md-autocomplete
@@ -19,7 +18,6 @@
         </md-item-template>
       </md-autocomplete>
       <br/>
-      <md-checkbox >Index?</md-checkbox>
       <md-button ng-click="search()" class="md-raised">Search</md-button>
     </md-content>
   <div ng-show="isLoading" layout="row" layout-sm="column" layout-align="space-around">
@@ -28,10 +26,10 @@
   <div infinite-scroll='loadResults()' infinite-scroll-disabled='isBusy' infinite-scroll-distance='1' ng-show="anyResults()">
     <h4>{{resultAmount}} results found</h4>
     <md-list>
-      <md-list-item style="height: 100px; width: 65%;" class="md-3-line"  ng-repeat="item in searchResults">
+      <md-list-item style="height: 100px; width: 100%;" class="md-3-line"  ng-repeat="item in searchResults">
         <div class="md-list-item-text">
           <h3>{{item.Title}}</h3>
-          <p class="snippet">{{item.Snippet}}</p>
+          <p class='snippet' ng-bind-html="item.Snippet"></p>
         </div>
         <md-button class="md-secondary" ng-href="{{item.Link}}" ng-attr-target="_blank">Go</md-button>
         <md-divider></md-divider>

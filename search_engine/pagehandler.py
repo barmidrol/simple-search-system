@@ -46,16 +46,3 @@ class PageHandler:
                 self.mongo_conn.write_processed_document(page['url'])
 
             self.mongo_conn.document_to_indexing(data)
-
-def main(process_count):
-    def process_documents():
-        handler = PageHandler()
-        handler.start()
-
-    workers = [Process(target=process_documents) for _ in range(process_count)]
-    [worker.start() for worker in workers]
-    [worker.join() for worker in workers]
-
-
-if __name__ == '__main__':
-    main(3)

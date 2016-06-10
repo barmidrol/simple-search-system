@@ -65,3 +65,5 @@ target/
 # OSX stuff
 *.DS_Store
 .idea
+*.sqlite3
+search_results0
